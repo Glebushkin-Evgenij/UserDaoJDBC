@@ -21,6 +21,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(String name, String lastName, byte age) {
     userDao.saveUser(name, lastName, age);
+    System.out.println("User с именем – " + name + " добавлен в базу данных");
     }
     @Override
     public void removeUserById(long id) {
@@ -28,7 +29,6 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public List<User> getAllUsers() {
-
         return userDao.getAllUsers();
     }
     @Override

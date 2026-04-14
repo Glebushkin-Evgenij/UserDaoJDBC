@@ -16,11 +16,11 @@ public class UserDaoJDBCImpl implements UserDao {
     private static final String DELETE_USER_SQL = "DELETE FROM users WHERE id = ?";
     private static final String SELECT_USER_SQL = "SELECT * FROM users";
     private static final String SAVE_USER_SQL = "INSERT INTO users (name, lastName, age) VALUES (?, ?, ?)";
-    private static final String CLEAN_TABLE_SQL = "DELETE FROM users";
+    private static final String CLEAN_TABLE_SQL = "TRUNCATE TABLE users";
     private static final String DROP_TABLE_SQL = "DROP TABLE IF EXISTS users";
     private static final String CREATE_TABLE_SQL = """
             CREATE TABLE IF NOT EXISTS users (
-            id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
+            id BIGINT PRIMARY KEY AUTO_INCREMENT,
             name varchar(255),
             lastName varchar(255),
             age int
@@ -80,18 +80,14 @@ public class UserDaoJDBCImpl implements UserDao {
         try (var preparedStatement = connection.prepareStatement(SELECT_USER_SQL)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            User user = new User();
-            while (resultSet.next()) {
+            while(resultSet.next()) {
+                User user = new User(resultSet.getString("name"),
+                        resultSet.getString("lastName"), resultSet.getByte("age"));
                 user.setId(resultSet.getLong("id"));
-                user.setName(resultSet.getString("name"));
-                user.setLastName(resultSet.getString("lastName"));
-                user.setAge(resultSet.getByte("age"));
                 users.add(user);
             }
-
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         return users;
